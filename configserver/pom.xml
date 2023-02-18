@@ -66,6 +66,7 @@
 					<image>
 						<name>naresh546/${project.artifactId}</name>
 					</image>
+					<finalName>${project.artifactId}</finalName>
 				</configuration>
 			</plugin>
 		</plugins>
