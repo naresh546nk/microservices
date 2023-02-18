@@ -1,0 +1,5 @@
+FROM adoptopenjdk/openjdk11:alpine-jre
+
+COPY target/card.jar app.jar
+
+ENTRYPOINT ["java"

@@ -1,0 +1,23 @@
+version: '3.8'
+services:
+  accounts:
+    image: naresh546/account:latest
+    mem_limit: 700m
+    ports:
+      -"8080":"8080"
+    networks:
+      - microservice-network
+  loans:
+    image: naresh546/loan:latest
+    mem_limit: 700m
+    ports:
+      -"8090":"8090"
+    networks:
+      - microservice-network
+  cards:
+    image: naresh546/card:latest
+    mem_limit: 700m
+    ports:
+      -"9000":"9000"
+    networks:
+      - microservice-network
