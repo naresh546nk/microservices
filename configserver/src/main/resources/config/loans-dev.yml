@@ -1,0 +1,12 @@
+loans:
+  msg: Welcome to my loan banking application dev
+  build-version: 3
+  mailDetails:
+    hostName: dev-account@gmail.com
+    port: 9000
+    from: dev-account@gmail.com
+    subject: Your acccount is opened
+  activeBranches:
+    - Mumbai
+    - London
+    - Washington
