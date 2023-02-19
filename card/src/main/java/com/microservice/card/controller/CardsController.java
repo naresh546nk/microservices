@@ -11,14 +11,11 @@ import com.microservice.card.model.Customer;
 import com.microservice.card.model.Properties;
 import com.microservice.card.repository.CardsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.web.bind.annotation.*;
 
 
 @RestController
+@RequestMapping("card")
 public class CardsController {
 
 	@Autowired
@@ -38,7 +35,7 @@ public class CardsController {
 
 	}
 
-	@GetMapping("card/properties")
+	@GetMapping("/properties")
 	public Properties getAllProperties(){
 		return  new Properties(cardsConfig.getMsg(),cardsConfig.getBuildVersion(),cardsConfig.getMailDetails(),cardsConfig.getActiveBranches());
 

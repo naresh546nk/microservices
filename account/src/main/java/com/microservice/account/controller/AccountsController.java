@@ -11,10 +11,7 @@ import com.microservice.account.model.Properties;
 import com.microservice.account.repository.AccountsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 
 import java.util.List;
@@ -22,6 +19,7 @@ import java.util.List;
 
 
 @RestController
+@RequestMapping("account")
 public class AccountsController {
 	
 	@Autowired
@@ -43,13 +41,13 @@ public class AccountsController {
 
 	}
 
-	@GetMapping("/account/properties")
+	@GetMapping("/properties")
 	public  Properties getPropertiesDetails() throws JsonProcessingException {
 		Properties properties=new Properties(accountsConfig.getMsg(),accountsConfig.getBuildVersion(),accountsConfig.getMailDetails(),accountsConfig.getActiveBranches());
 		return  properties;
 	}
 
-	@GetMapping("/accounts")
+	@GetMapping("/")
 	public List<Accounts> getAllAccounts(){
 		return  accountsRepository.findAll();
 	}
