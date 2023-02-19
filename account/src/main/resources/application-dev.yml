@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: accounts
+  config:
+    import: optional:configserver:http://localhost:8071
+cards:
+  baseUrl: http://cards:9000
+loans:
+  baseUrl: http://loans:8090
+

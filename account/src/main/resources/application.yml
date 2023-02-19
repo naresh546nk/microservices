@@ -2,6 +2,38 @@ spring:
   application:
     name: accounts
   profiles:
-    active: dev
+    active: default
   config:
     import: optional:configserver:http://localhost:8071
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+cards:
+  baseUrl: http://localhost:9000
+loans:
+  baseUrl: http://localhost:8090
+
+#Circuit Breaker configuration
+
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        registerHealthIndicator: true      # This properties will tell to enable all the circuitbreaker end point to actuator
+    instances:
+      customerDetailsCircuit:
+        minimumNumberOfCalls: 5  # will monitor 5 request per second default value 50
+        failureRateThreshold: 50  # if 50% request fail then it will start fast fail
+        waitDurationInOpenState: 30000  # it will wait for 30 second
+        permittedNumberOfCallsInHalfOpenState: 2 # monitor 2 request in half open starte
+#Rate limiter configuration
+  ratelimiter:
+    configs:
+      default:
+        registerHealthIndicator: true
+    instances:
+      helloRateLimiter:
+        timeoutDuration: 2s    #thread will time out if does not get permition to  execute default is 5s.
+        limitRefreshPeriod: 20s   # this will refresh the count to start the new count after 5 second
+        limitForPeriod: 2     # number of request permited during refreshperiod.

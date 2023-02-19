@@ -8,7 +8,20 @@ services:
       - "8071:8071"
     networks:
       - banking
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eurekaservice:8761/eureka/
 
+  #eurekaservice microservice
+  eurekaservice:
+    image: naresh546/eurekaservice:latest
+    mem_limit: 700m
+    ports:
+      - "8761:8761"
+    networks:
+      - banking
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
   #Account microservice
   accounts:
     image: naresh546/account:latest
@@ -19,6 +32,7 @@ services:
       - banking
     depends_on:
       - configserver
+      - eurekaservice
     deploy:
       restart_policy:
         condition: on-failure
@@ -28,6 +42,7 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: dev
       SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eurekaservice:8761/eureka/
   #Loan microservice
   loans:
     image: naresh546/loan:latest
@@ -38,6 +53,7 @@ services:
       - banking
     depends_on:
       - configserver
+      - eurekaservice
     deploy:
       restart_policy:
         condition: on-failure
@@ -47,6 +63,7 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: dev
       SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eurekaservice:8761/eureka/
   #Card microservice
   cards:
     image: naresh546/card:latest
@@ -57,6 +74,7 @@ services:
       - banking
     depends_on:
       - configserver
+      - eurekaservice
     deploy:
       restart_policy:
         condition: on-failure
@@ -66,5 +84,6 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: dev
       SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eurekaservice:8761/eureka/
 networks:
   banking:
