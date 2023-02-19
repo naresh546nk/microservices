@@ -3,14 +3,11 @@ package com.microservice.account.controller;
 
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.microservice.account.config.AccountsConfig;
-import com.microservice.account.model.Accounts;
-import com.microservice.account.model.Customer;
-import com.microservice.account.model.Properties;
+import com.microservice.account.model.*;
 import com.microservice.account.repository.AccountsRepository;
+import com.microservice.account.service.CustomerServices;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -28,6 +25,8 @@ public class AccountsController {
 	@Autowired
 	private AccountsConfig accountsConfig;
 
+	@Autowired
+	private CustomerServices customerServices;
 
 	@PostMapping("/myAccount")
 	public Accounts getAccountDetails(@RequestBody Customer customer) {
@@ -38,6 +37,23 @@ public class AccountsController {
 		} else {
 			return null;
 		}
+
+	}
+
+	@PostMapping("/customerDetails")
+	public CustomerDetials getCustomerDetails(@RequestBody Customer customer){
+
+		Accounts accountDetails = getAccountDetails(customer);
+		List<Loans> loansList = customerServices.getAllLones(customer).collectList().block();
+		List<Cards> cardsList = customerServices.getAllCards(customer).collectList().block();
+
+		CustomerDetials customerDetials=new CustomerDetials();
+		customerDetials.setAccounts(accountDetails);
+		customerDetials.setCards(cardsList);
+		customerDetials.setLoans(loansList);
+
+		return  customerDetials;
+
 
 	}
 

@@ -1,12 +1,10 @@
 spring:
   application:
     name: accounts
-  profiles:
-    active: dev
   config:
     import: optional:configserver:http://localhost:8071
 cards:
-  baseUrl: http://localhost:9000
+  baseUrl: http://cards:9000
 loans:
-  baseUrl: http://localhost:8090
+  baseUrl: http://loans:8090
 
