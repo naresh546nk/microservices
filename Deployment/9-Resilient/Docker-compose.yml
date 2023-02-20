@@ -1,0 +1,89 @@
+version: "3.8"
+services:
+  #configserver microservice
+  configserver:
+    image: naresh546/configserver:9-R
+    mem_limit: 700m
+    ports:
+      - "8071:8071"
+    networks:
+      - banking
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eurekaservice:8761/eureka/
+
+  #eurekaservice microservice
+  eurekaservice:
+    image: naresh546/eurekaservice:9-R
+    mem_limit: 700m
+    ports:
+      - "8761:8761"
+    networks:
+      - banking
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+  #Account microservice
+  accounts:
+    image: naresh546/account:9-R
+    mem_limit: 700m
+    ports:
+      - "8080:8080"
+    networks:
+      - banking
+    depends_on:
+      - configserver
+      - eurekaservice
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eurekaservice:8761/eureka/
+  #Loan microservice
+  loans:
+    image: naresh546/loan:9-R
+    mem_limit: 700m
+    ports:
+      - "8090:8090"
+    networks:
+      - banking
+    depends_on:
+      - configserver
+      - eurekaservice
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eurekaservice:8761/eureka/
+  #Card microservice
+  cards:
+    image: naresh546/card:9-R
+    mem_limit: 700m
+    ports:
+      - "9000:9000"
+    networks:
+      - banking
+    depends_on:
+      - configserver
+      - eurekaservice
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eurekaservice:8761/eureka/
+networks:
+  banking:
