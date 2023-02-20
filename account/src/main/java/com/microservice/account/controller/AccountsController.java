@@ -44,7 +44,7 @@ public class AccountsController {
 
 	@PostMapping("/customerDetails")
 	@CircuitBreaker(name = "customerDetailsCircuit", fallbackMethod = "customerDetialsCircuitFallback")
-	public CustomerDetials getCustomerDetails(@RequestBody Customer customer){
+	public CustomerDetials getCustomerDetails(@RequestHeader("banking-correlation-id") String correlationId ,  @RequestBody Customer customer){
 		Accounts accountDetails = getAccountDetails(customer);
 		List<Loans> loansList = customerServices.getAllLones(customer).collectList().block();
 		List<Cards> cardsList = customerServices.getAllCards(customer).collectList().block();
@@ -56,7 +56,7 @@ public class AccountsController {
 		return  customerDetials;
 	}
 
-	private  CustomerDetials customerDetialsCircuitFallback(Customer customer,Throwable throwable){
+	private  CustomerDetials customerDetialsCircuitFallback(@RequestHeader("banking-correlation-id") String correlationId ,  Customer customer,Throwable throwable){
 		CustomerDetials customerDetials=new CustomerDetials();
 		Accounts accountDetails = getAccountDetails(customer);
 		customerDetials.setAccounts(accountDetails);
