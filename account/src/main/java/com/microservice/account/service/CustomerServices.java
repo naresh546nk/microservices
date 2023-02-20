@@ -5,6 +5,9 @@ import com.microservice.account.model.Customer;
 import com.microservice.account.model.Loans;
 import lombok.extern.slf4j.Slf4j;
 import lombok.extern.slf4j.XSlf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -17,36 +20,32 @@ import reactor.core.publisher.Mono;
 public class CustomerServices {
     @Value("${cards.baseUrl}")
     private String cardsBaseUrl;
-
     @Value("${loans.baseUrl}")
-    private String  loansBaseUrl;
+    private String loansBaseUrl;
 
-    private WebClient webClient= WebClient.builder().build();
+    private  static final Logger logger= LoggerFactory.getLogger(CustomerServices.class);
 
-    public void  log(String str){
-        System.out.println(str);
-    }
+    @Autowired
+    private WebClient webClient;
 
     public Flux<Cards> getAllCards(Customer customer){
-
-        log("cardBaseUrl :"+cardsBaseUrl);
-        log("cardBaseUrl :"+loansBaseUrl);
-
-
+        logger.info("getAllCards() -->Started .");
         Flux<Cards> cardsFlux = webClient.post()
                 .uri(cardsBaseUrl + "/card/myCards")
                 .body(Mono.just(customer), Customer.class)
                 .retrieve()
                 .bodyToFlux(Cards.class);
+        logger.info("getAllCards() -->ended .");
         return cardsFlux;
     }
     public Flux<Loans> getAllLones(Customer customer){
-
+        logger.info("getAllLones() -->Started .");
         Flux<Loans> LonesFlex = webClient.post()
                 .uri(loansBaseUrl + "/loan/myLoans")
                 .body(Mono.just(customer), Customer.class)
                 .retrieve()
                 .bodyToFlux(Loans.class);
+        logger.info("getAllLones() -->ended .");
         return LonesFlex;
     }
 

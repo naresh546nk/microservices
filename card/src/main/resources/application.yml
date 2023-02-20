@@ -5,7 +5,27 @@ spring:
     active: default
   config:
     import: optional:configserver:http://localhost:8071
+
+  #percentage of request sent ot zipkin
+  sleuth:
+    sampler:
+      probability: 1
+  #zipkin base url where zipkin is running
+  zipkin:
+    base-url: http://localhost:9411/
 eureka:
   client:
     service-url:
       defaultZone: http://localhost:8761/eureka
+logging:
+  pattern:
+    level: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]"
+
+
+management:
+  metrics:
+    distribution:
+      percentiles-histogram:
+        http:
+          server:
+            request: true

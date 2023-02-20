@@ -7,4 +7,3 @@ cards:
   baseUrl: http://cards:9000
 loans:
   baseUrl: http://loans:8090
-

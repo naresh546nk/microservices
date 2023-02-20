@@ -5,6 +5,15 @@ spring:
     active: default
   config:
     import: optional:configserver:http://localhost:8071
+#  #percentage of request sent ot zipkin
+  sleuth:
+    sampler:
+      probability: 1
+  #zipkin base url where zipkin is running
+  zipkin:
+    base-url: http://localhost:9411/
+
+
 eureka:
   client:
     service-url:
@@ -37,3 +46,14 @@ resilience4j:
         timeoutDuration: 2s    #thread will time out if does not get permition to  execute default is 5s.
         limitRefreshPeriod: 20s   # this will refresh the count to start the new count after 5 second
         limitForPeriod: 2     # number of request permited during refreshperiod.
+logging:
+  pattern:
+    level: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]"
+
+management:
+  metrics:
+    distribution:
+      percentiles-histogram:
+        http:
+          server:
+            request: true
