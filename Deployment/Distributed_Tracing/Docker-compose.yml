@@ -1,8 +1,16 @@
 version: "3.8"
 services:
+  #zipkin server
+  zipkin:
+    image: openzipkin/zipkin
+    mem_limit: 700m
+    ports:
+      - "9411:9411"
+    networks:
+      - banking
   #configserver microservice
   configserver:
-    image: naresh546/configserver:latest
+    image: naresh546/configserver:$TAG
     mem_limit: 700m
     ports:
       - "8071:8071"
@@ -14,7 +22,7 @@ services:
 
   #eurekaservice microservice
   eurekaservice:
-    image: naresh546/eurekaservice:latest
+    image: naresh546/eurekaservice:$TAG
     mem_limit: 700m
     ports:
       - "8761:8761"
@@ -24,7 +32,7 @@ services:
       SPRING_PROFILES_ACTIVE: dev
   #Account microservice
   accounts:
-    image: naresh546/account:latest
+    image: naresh546/account:$TAG
     mem_limit: 700m
     ports:
       - "8080:8080"
@@ -43,9 +51,10 @@ services:
       SPRING_PROFILES_ACTIVE: dev
       SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eurekaservice:8761/eureka/
+      SPRING_ZIPKIN_BASEURL: http://zipkin:9411/
   #Loan microservice
   loans:
-    image: naresh546/loan:latest
+    image: naresh546/loan:$TAG
     mem_limit: 700m
     ports:
       - "8090:8090"
@@ -64,9 +73,10 @@ services:
       SPRING_PROFILES_ACTIVE: dev
       SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eurekaservice:8761/eureka/
+      SPRING_ZIPKIN_BASEURL: http://zipkin:9411/
   #Card microservice
   cards:
-    image: naresh546/card:latest
+    image: naresh546/card:$TAG
     mem_limit: 700m
     ports:
       - "9000:9000"
@@ -85,5 +95,27 @@ services:
       SPRING_PROFILES_ACTIVE: dev
       SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eurekaservice:8761/eureka/
+      SPRING_ZIPKIN_BASEURL: http://zipkin:9411/
+  #Gateway microservice
+  Gateway:
+    image: naresh546/gateway:$TAG
+    mem_limit: 700m
+    ports:
+      - "8000:8000"
+    networks:
+      - banking
+    depends_on:
+      - configserver
+      - eurekaservice
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eurekaservice:8761/eureka/
+      SPRING_ZIPKIN_BASEURL: http://zipkin:9411/
 networks:
   banking:
