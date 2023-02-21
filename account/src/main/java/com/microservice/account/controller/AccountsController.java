@@ -9,6 +9,7 @@ import com.microservice.account.repository.AccountsRepository;
 import com.microservice.account.service.CustomerServices;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
+import io.micrometer.core.annotation.Timed;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,6 +32,7 @@ public class AccountsController {
 	private CustomerServices customerServices;
 
 	@PostMapping("/myAccount")
+	@Timed(value = "getAccountDetails.time", description = "Time taken to return account details")
 	public Accounts getAccountDetails(@RequestBody Customer customer) {
 
 		Accounts accounts = accountsRepository.findByCustomerId(customer.getCustomerId());
